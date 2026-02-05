@@ -1,210 +1,100 @@
-"""
-Recursion Assignment Starter Code
-Complete the recursive functions below to analyze the compromised file system.
-"""
-
 import os
 
-# ============================================================================
-# PART 1: RECURSION WARM-UPS
-# ============================================================================
+# ============================================================
+# PART 1: RECURSION WARM UP
+# (Function names may differ slightly in your template.
+#  If yours are named differently, paste the *logic* inside.)
+# ============================================================
 
-def sum_list(numbers):
-    """
-    Recursively calculate the sum of a list of numbers.
-    
-    This is your first recursion problem. Think about:
-    - Base case: What's the sum of an empty list?
-    - Recursive case: If you know the sum of the rest of the list,
-      how do you include the first number?
-    
-    Args:
-        numbers (list): List of numbers to sum
-    
-    Returns:
-        int: Sum of all numbers in the list
-    
-    Example:
-        sum_list([1, 2, 3, 4]) should return 10
-        sum_list([]) should return 0
-    """
-    # TODO: Implement this function
-    # Hint: if len(numbers) == 0, return 0
-    # Otherwise, return numbers[0] + sum_list(numbers[1:])
-    
-    pass
-
-# Uncomment to test sum_list
-# print("\nTest sum_list:")
-# print(f"  sum_list([1, 2, 3, 4]) = {sum_list([1, 2, 3, 4])} (expected: 10)")
-# print(f"  sum_list([]) = {sum_list([])} (expected: 0)")
-# print(f"  sum_list([5, 5, 5]) = {sum_list([5, 5, 5])} (expected: 15)")
+def recursive_sum(nums):
+    """Return the sum of a list of integers using recursion."""
+    # Base case
+    if len(nums) == 0:
+        return 0
+    # Recursive case
+    return nums[0] + recursive_sum(nums[1:])
 
 
-def count_even(numbers):
-    """
-    Recursively count how many even numbers are in a list.
-    
-    This teaches you how to count items that match a condition.
-    You'll use this same pattern for counting files!
-    
-    Args:
-        numbers (list): List of numbers
-    
-    Returns:
-        int: Count of even numbers in the list
-    
-    Example:
-        count_even([1, 2, 3, 4, 5, 6]) should return 3
-        count_even([1, 3, 5]) should return 0
-    """
-    # TODO: Implement this function
-    # Hint: Base case is empty list (return 0)
-    # If first number is even, add 1 to count from rest of list
-    # If first number is odd, just return count from rest of list
-    
-    pass
+def recursive_count(nums):
+    """Return the number of items in a list using recursion (no len())."""
+    if nums == []:
+        return 0
+    return 1 + recursive_count(nums[1:])
 
-# Uncomment to test count_even
-# print("\nTest count_even:")
-# print(f"  count_even([1, 2, 3, 4, 5, 6]) = {count_even([1, 2, 3, 4, 5, 6])} (expected: 3)")
-# print(f"  count_even([1, 3, 5]) = {count_even([1, 3, 5])} (expected: 0)")
-# print(f"  count_even([2, 4, 6]) = {count_even([2, 4, 6])} (expected: 3)")
 
-def find_strings_with(strings, target):
-    """
-    Recursively find all strings that contain a target substring.
-    
-    This teaches you how to build a list of items that match a condition.
-    You'll use this same pattern for finding infected files!
-    
-    Args:
-        strings (list): List of strings to search
-        target (str): Substring to search for
-    
-    Returns:
-        list: All strings that contain the target substring
-    
-    Example:
-        find_strings_with(["hello", "world", "help"], "hel") 
-        should return ["hello", "help"]
-    """
-    # TODO: Implement this function
-    # Hint: Base case is empty list (return [])
-    # If first string contains target, add it to results from rest of list
-    # Otherwise, just return results from rest of list
-    # Use: if target in strings[0]
-    
-    pass
+def recursive_max(nums):
+    """Return the max value in a non-empty list using recursion."""
+    if len(nums) == 1:
+        return nums[0]
+    rest_max = recursive_max(nums[1:])
+    return nums[0] if nums[0] > rest_max else rest_max
 
-# Uncomment to test find_strings_with
-# print("\nTest find_strings_with:")
-# result = find_strings_with(["hello", "world", "help", "test"], "hel")
-# print(f"  find_strings_with(['hello', 'world', 'help', 'test'], 'hel') = {result}")
-# print(f"  (expected: ['hello', 'help'])")
-    
-# result = find_strings_with(["cat", "dog", "bird"], "z")
-# print(f"  find_strings_with(['cat', 'dog', 'bird'], 'z') = {result}")
-# print(f"  (expected: [])")
 
-# ============================================================================
+# ============================================================
 # PART 2: COUNT ALL FILES
-# ============================================================================
+# ============================================================
 
 def count_files(directory_path):
     """
-    Recursively count all files in a directory and its subdirectories.
-    
-    Args:
-        directory_path (str): Path to the directory to analyze
-    
-    Returns:
-        int: Total number of files in the directory tree
-    
-    Example:
-        If directory structure is:
-        root/
-            file1.txt
-            file2.txt
-            subdir/
-                file3.txt
-        
-        count_files('root') should return 3
+    Recursively count all files in directory_path (including in subfolders).
+    Returns an integer count.
     """
-    # TODO: Implement this function
-    # Hints:
-    # 1. What is the base case? (What if directory_path is a file, not a directory?)
-    # 2. How do you list items in a directory? (Check Resource 3)
-    # 3. For each item, is it a file or directory? Recursively handle directories.
-    # 4. How do you combine the results?
-    
-    pass
+    total = 0
+
+    # List entries in this directory
+    try:
+        entries = os.listdir(directory_path)
+    except FileNotFoundError:
+        return 0
+
+    for name in entries:
+        full_path = os.path.join(directory_path, name)
+
+        if os.path.isfile(full_path):
+            total += 1
+        elif os.path.isdir(full_path):
+            total += count_files(full_path)
+
+    return total
 
 
-# ============================================================================
+# ============================================================
 # PART 3: FIND INFECTED FILES
-# ============================================================================
+# ============================================================
 
-def find_infected_files(directory_path, extension=".encrypted"):
+def find_infected_files(directory_path, extension):
     """
-    Recursively find all files with a specific extension in a directory tree.
-    
-    Args:
-        directory_path (str): Path to the directory to analyze
-        extension (str): File extension to search for (default: ".encrypted")
-    
-    Returns:
-        list: List of full paths to all files with the specified extension
-    
-    Example:
-        If directory structure is:
-        root/
-            normal.txt
-            virus.encrypted
-            subdir/
-                data.encrypted
-        
-        find_infected_files('root', '.encrypted') should return:
-        ['root/virus.encrypted', 'root/subdir/data.encrypted']
+    Recursively find all files ending with `extension` under directory_path.
+    Returns a list of FULL file paths.
     """
-    # TODO: Implement this function
-    # Hints:
-    # 1. Base case: If it's a file, check if it has the extension
-    # 2. Recursive case: If it's a directory, check all items inside
-    # 3. You'll need to build and return a list of matching file paths
-    # 4. Use os.path.join() to create full paths
-    
-    pass
+    infected = []
+
+    try:
+        entries = os.listdir(directory_path)
+    except FileNotFoundError:
+        return infected
+
+    for name in entries:
+        full_path = os.path.join(directory_path, name)
+
+        if os.path.isfile(full_path):
+            if name.endswith(extension):
+                infected.append(full_path)
+        elif os.path.isdir(full_path):
+            infected.extend(find_infected_files(full_path, extension))
+
+    return infected
 
 
-# ============================================================================
-# TESTING & BENCHMARKING
-# ============================================================================
-
+# ============================================================
+# MAIN (Uncomment tests in your template)
+# ============================================================
 
 if __name__ == "__main__":
-    print("RECURSION ASSIGNMENT - STARTER CODE")
-    print("Complete the functions above, then run this file to test your work.\n")
-    
-    ## 1. Uncomment to run tests for count_files functions
-    # print("Total files (Test Case 1):", count_files("test_cases/case1_flat")) # 5
-    # print("Total files (Test Case 2):", count_files("test_cases/case2_nested")) # 4
-    # print("Total files (Test Case 3):", count_files("test_cases/case3_infected")) # 5
+    # Warm-up quick tests (optional)
+    # print(recursive_sum([1, 2, 3, 4]))     # 10
+    # print(recursive_count([9, 8, 7]))      # 3
+    # print(recursive_max([5, 1, 9, 2]))     # 9
 
-    ## 2. Uncomment to run count_files for breached files
-    # print("Total files (breeched files):", count_files("breach_data")) # ???
-
-    ## 3. Uncomment to run tests for find_infected_files function
-    # print("Total Infected Files (Test Case 1):", len(find_infected_files("test_cases/case1_flat"))) # 0
-    # print("Total Infected Files (Test Case 1):", len(find_infected_files("test_cases/case2_nested"))) # 0
-    # print("Total Infected Files (Test Case 3):", len(find_infected_files("test_cases/case3_infected"))) # 3
-
-    ## 4. Uncomment to run find_infected breached files
-    # print("Total Infected Files (breached files):", len(find_infected_files("breach_data"))) # ???
-
-    ## 5. Determine how many files were corrupted by department (Finance, HR, and Sales)
-    
-
-
-    
-    print("\n⚠ Uncomment the test functions in the main block to run tests!")
+    # Your template likely already has test cases to uncomment.
+    pass
